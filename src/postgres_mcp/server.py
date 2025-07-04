@@ -12,7 +12,9 @@ from typing import Literal
 from typing import Union
 
 import mcp.types as types
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
+from fastmcp.server.auth import BearerAuthProvider
+
 from pydantic import Field
 from pydantic import validate_call
 
@@ -34,7 +36,7 @@ from .sql import obfuscate_password
 from .top_queries import TopQueriesCalc
 
 # Initialize FastMCP with default settings
-mcp = FastMCP("postgres-mcp")
+mcp = FastMCP("postgres-mcp", auth = BearerAuthProvider(public_key=os.getenv("PUBLIC_KEY", ""))) if os.getenv("PUBLIC_KEY", "") else FastMCP("postgres-mcp")
 
 # Constants
 PG_STAT_STATEMENTS = "pg_stat_statements"
@@ -387,6 +389,24 @@ If there is no hypothetical index, you can pass an empty list.""",
 
 
 # Query function declaration without the decorator - we'll add it dynamically based on access mode
+@mcp.tool(name="execute_sql", description="Execute a SQL query against the database")
+async def execute_read_only_sql(
+    sql: str = Field(description="SQL to run", default="all"),
+) -> ResponseType:
+    """Executes a SQL query against the database."""
+    try:
+        sql_driver = await get_sql_driver()
+        rows = await sql_driver.execute_query(sql)  # type: ignore
+        if rows is None:
+            return format_text_response("No results")
+        return format_text_response(list([r.cells for r in rows]))
+    except Exception as e:
+        logger.error(f"Error executing query: {e}")
+        return format_error_response(str(e))
+
+
+# Query function declaration without the decorator - we'll add it dynamically based on access mode
+@mcp.tool(name="execute_sql", description="Execute a SQL query against the database")
 async def execute_sql(
     sql: str = Field(description="SQL to run", default="all"),
 ) -> ResponseType:
@@ -548,10 +568,10 @@ async def main():
 
     # Add the query tool with a description appropriate to the access mode
     if current_access_mode == AccessMode.UNRESTRICTED:
-        mcp.add_tool(execute_sql, description="Execute any SQL query")
+        mcp.add_tool(execute_sql)
     else:
-        mcp.add_tool(execute_sql, description="Execute a read-only SQL query")
-
+        mcp.add_tool(execute_read_only_sql)
+        
     logger.info(f"Starting PostgreSQL MCP Server in {current_access_mode.upper()} mode")
 
     # Get database URL from environment variable or command line
