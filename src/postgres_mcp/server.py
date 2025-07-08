@@ -36,7 +36,11 @@ from .sql import obfuscate_password
 from .top_queries import TopQueriesCalc
 
 # Initialize FastMCP with default settings
-mcp = FastMCP("postgres-mcp", auth = BearerAuthProvider(public_key=os.getenv("PUBLIC_KEY", ""))) if os.getenv("PUBLIC_KEY", "") else FastMCP("postgres-mcp")
+mcp = (
+    FastMCP("postgres-mcp", auth=BearerAuthProvider(public_key=os.getenv("PUBLIC_KEY", "")))
+    if os.getenv("PUBLIC_KEY", "")
+    else FastMCP("postgres-mcp")
+)
 
 # Constants
 PG_STAT_STATEMENTS = "pg_stat_statements"
@@ -571,7 +575,7 @@ async def main():
         mcp.add_tool(execute_sql)
     else:
         mcp.add_tool(execute_read_only_sql)
-        
+
     logger.info(f"Starting PostgreSQL MCP Server in {current_access_mode.upper()} mode")
 
     # Get database URL from environment variable or command line
