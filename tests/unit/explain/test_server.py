@@ -10,6 +10,7 @@ import postgres_mcp.server as server
 
 # pyright: reportGeneralTypeIssues=false
 
+
 class MockCell:
     def __init__(self, data):
         self.cells = data
@@ -47,7 +48,7 @@ async def test_explain_query_basic():
     # Use patch to replace the actual explain_query function with our own mock
     with patch.object(server, "explain_query", return_value=[mock_response]):
         # Call the patched function
-        result = await server.explain_query("SELECT * FROM users") # type: ignore
+        result = await server.explain_query("SELECT * FROM users")  # type: ignore
 
         # Verify we get the expected result
         assert isinstance(result, list)
@@ -75,7 +76,7 @@ async def test_explain_query_analyze():
     # Use patch to replace the actual explain_query function with our own mock
     with patch.object(server, "explain_query", return_value=[mock_response]):
         # Call the patched function with analyze=True
-        result = await server.explain_query("SELECT * FROM users", analyze=True) # type: ignore
+        result = await server.explain_query("SELECT * FROM users", analyze=True)  # type: ignore
 
         # Verify we get the expected result
         assert isinstance(result, list)
@@ -105,7 +106,7 @@ async def test_explain_query_hypothetical_indexes():
     # Use patch to replace the actual explain_query function with our own mock
     with patch.object(server, "explain_query", return_value=[mock_response]):
         # Call the patched function with hypothetical_indexes
-        result = await server.explain_query(test_sql, hypothetical_indexes=test_indexes) # type: ignore
+        result = await server.explain_query(test_sql, hypothetical_indexes=test_indexes)  # type: ignore
 
         # Verify we get the expected result
         assert isinstance(result, list)
@@ -124,7 +125,7 @@ async def test_explain_query_error_handling():
     # Use patch to replace the actual function with our mock that returns an error
     with patch.object(server, "explain_query", return_value=[mock_response]):
         # Call the patched function
-        result = await server.explain_query("INVALID SQL") # type: ignore
+        result = await server.explain_query("INVALID SQL")  # type: ignore
 
         # Verify error is formatted correctly
         assert isinstance(result, list)

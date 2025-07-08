@@ -10,6 +10,7 @@ from postgres_mcp.server import explain_query
 
 # pyright: reportGeneralTypeIssues=false
 
+
 @pytest_asyncio.fixture
 async def mock_safe_sql_driver():
     """Create a mock SafeSqlDriver for testing."""
@@ -46,7 +47,7 @@ async def test_explain_query_integration():
         with patch("postgres_mcp.server.get_sql_driver"):
             # Patch the ExplainPlanTool
             with patch("postgres_mcp.server.ExplainPlanTool"):
-                result = await explain_query("SELECT * FROM users", hypothetical_indexes=None) # type: ignore
+                result = await explain_query("SELECT * FROM users", hypothetical_indexes=None)  # type: ignore
 
                 # Verify result matches our expected plan data
                 assert isinstance(result, list)
@@ -68,7 +69,7 @@ async def test_explain_query_with_analyze_integration():
         with patch("postgres_mcp.server.get_sql_driver"):
             # Patch the ExplainPlanTool
             with patch("postgres_mcp.server.ExplainPlanTool"):
-                result = await explain_query("SELECT * FROM users", analyze=True, hypothetical_indexes=None) # type: ignore
+                result = await explain_query("SELECT * FROM users", analyze=True, hypothetical_indexes=None)  # type: ignore
 
                 # Verify result matches our expected plan data
                 assert isinstance(result, list)
@@ -99,7 +100,7 @@ async def test_explain_query_with_hypothetical_indexes_integration():
         with patch("postgres_mcp.server.get_sql_driver", return_value=mock_safe_driver):
             # Patch the ExplainPlanTool
             with patch("postgres_mcp.server.ExplainPlanTool"):
-                result = await explain_query(test_sql, hypothetical_indexes=test_indexes) # type: ignore
+                result = await explain_query(test_sql, hypothetical_indexes=test_indexes)  # type: ignore
 
                 # Verify result matches our expected plan data
                 assert isinstance(result, list)
@@ -130,7 +131,7 @@ async def test_explain_query_missing_hypopg_integration():
         with patch("postgres_mcp.server.get_sql_driver", return_value=mock_safe_driver):
             # Patch the ExplainPlanTool
             with patch("postgres_mcp.server.ExplainPlanTool"):
-                result = await explain_query(test_sql, hypothetical_indexes=test_indexes) # type: ignore
+                result = await explain_query(test_sql, hypothetical_indexes=test_indexes)  # type: ignore
 
                 # Verify result
                 assert isinstance(result, list)
@@ -153,7 +154,7 @@ async def test_explain_query_error_handling_integration():
             "postgres_mcp.server.get_sql_driver",
             side_effect=Exception(error_message),
         ):
-            result = await explain_query("INVALID SQL") # type: ignore
+            result = await explain_query("INVALID SQL")  # type: ignore
 
             # Verify error is correctly formatted
             assert isinstance(result, list)
