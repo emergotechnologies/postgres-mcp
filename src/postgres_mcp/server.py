@@ -14,7 +14,6 @@ from typing import Union
 import mcp.types as types
 from fastmcp import FastMCP
 from fastmcp.server.auth import BearerAuthProvider
-
 from pydantic import Field
 from pydantic import validate_call
 
