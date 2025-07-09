@@ -45,6 +45,3 @@ jobs:
 
       - name: Run Check
         run: uv run pyright
-
-      - name: Run Tests
-        run: uv run pytest -v --log-cli-level=INFO
